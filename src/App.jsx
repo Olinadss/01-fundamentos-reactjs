@@ -25,7 +25,7 @@ const posts = [
     id: 2,
     author: {
       avatarUrl: 'https://github.com/Vinizbjj.png',
-      name: 'Vinícius Burro',
+      name: 'Vinícius',
       role: 'Developer full stack junior em formação',
     },
     content: [
