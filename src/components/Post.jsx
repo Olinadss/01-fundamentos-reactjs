@@ -6,7 +6,7 @@ import ptBR from 'date-fns/locale/pt-BR';
 import { useState } from 'react';
 
 export function Post({author, publishedAt, content}) {
-  const [comments, setComment] = useState([]);
+  const [comments, setComments] = useState([]);
   const [newCommentText, setNewCommentText] = useState('')
 
   const publishedDateFormatted = format(publishedAt, "dd 'de' LLLL 'às' HH:mm'h'", {
@@ -21,13 +21,27 @@ export function Post({author, publishedAt, content}) {
   const handleCreateNewComment = (event) => {
     event.preventDefault()
     
-    setComment([...comments, newCommentText])
+    setComments([...comments, newCommentText])
     setNewCommentText('')
   }
 
   const handleNewCommentChange = (event) => {
+    event.target.setCustomValidity('');
     setNewCommentText(event.target.value)
   }
+
+  const handleNewCommentInvalid = (event) => {
+    event.target.setCustomValidity('Esse campo é obrigatório');
+  }
+
+  const deleteComment = (commentToDelete) => {
+    const commentsWithoutDeleteOne = comments.filter(comment => {
+      return comment !== commentToDelete;
+    })
+    setComments(commentsWithoutDeleteOne)
+  }
+
+  const isNewCommentEmpty = newCommentText.length === 0
 
   return (
     <article className={styles.post}>
@@ -62,16 +76,29 @@ export function Post({author, publishedAt, content}) {
           placeholder='Deixe um comentário'
           value={newCommentText}
           onChange={handleNewCommentChange}
+          onInvalid={handleNewCommentInvalid}
+          required
         />
 
         <footer>
-          <button button type="submit">Publicar</button>
+          <button
+            button type="submit"
+            disabled={isNewCommentEmpty} 
+          >
+            Publicar
+          </button>
         </footer> 
       </form>
 
       <div className={styles.commentList}>
         {comments.map(comment => {
-          return <Comment key={comment} content={comment}/>
+          return (
+            <Comment 
+              key={comment}
+              content={comment}
+              onDeleteComment={deleteComment}
+            />
+          )
         })}
       </div>
     </article>
